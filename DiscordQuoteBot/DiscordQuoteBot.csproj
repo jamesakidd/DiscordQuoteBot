@@ -125,7 +125,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include=".env" />
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
