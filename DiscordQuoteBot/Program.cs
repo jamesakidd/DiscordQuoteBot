@@ -22,10 +22,11 @@ namespace DiscordQuoteBot
         {
             DotEnv.Load(Path.Combine(Directory.GetCurrentDirectory(), ".env"));
             //var config = new ConfigurationBuilder().AddEnvironmentVariables().Build();
-            
+
             _client = new DiscordSocketClient();
             _commands = new CommandService();
             _services = new ServiceCollection().AddSingleton(_client).AddSingleton(_commands).BuildServiceProvider();
+
 
             string token = Environment.GetEnvironmentVariable("SECRET");
 
@@ -59,7 +60,7 @@ namespace DiscordQuoteBot
             if (message.Author.IsBot) return;
 
             int argPos = 0;
-            if (message.HasStringPrefix("!", ref argPos))
+            if (message.HasCharPrefix('!', ref argPos))
             {
                 var result = await _commands.ExecuteAsync(context, argPos, _services);
                 if (!result.IsSuccess) Console.WriteLine(result.ErrorReason);
