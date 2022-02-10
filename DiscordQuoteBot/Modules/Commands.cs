@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -16,16 +17,25 @@ namespace DiscordQuoteBot.Modules
         }
 
         [Command("quote")]
-        public async Task Quote()
+        public async Task Quote([Remainder] string keywords = null)
         {
-            var quotes = new Quotes(Path.Combine(Directory.GetCurrentDirectory(), "quotes.txt")).QuoteList;
-            string message = Context.Message.ToString().Remove(0, 6);
-            var matched = quotes.Where(keyword =>
-                Regex.IsMatch(message, Regex.Escape(keyword), RegexOptions.IgnoreCase)).ToList();
 
-            int index = new Random().Next(quotes.Count);
-            await ReplyAsync(quotes[index]);
+            var quotes = new Quotes(Path.Combine(Directory.GetCurrentDirectory(), "quotes.txt")).QuoteList;
+            var quote = keywords != null ? GetKeywordQuote(quotes, keywords) : GetRandomQuote(quotes);
+            await ReplyAsync(quote);
         }
 
+        private static string GetRandomQuote(List<string> quotes)
+        {
+            return quotes[new Random().Next(quotes.Count)];
+        }
+
+        private static string GetKeywordQuote(List<string> quotes, string keywords)
+        {
+            var matched = quotes.Where(keyword =>
+                Regex.IsMatch(keywords, Regex.Escape(keyword), RegexOptions.IgnoreCase)).ToList();
+
+            return matched[new Random().Next(quotes.Count)];
+        }
     }
 }
